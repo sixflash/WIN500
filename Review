@@ -1,0 +1,24 @@
+*** Credential
+
+$cred = Get-Credential
+$cred.Password | ConvertFrom-SecureString | Set-content "$home\password.txt"
+$password = Get-content "$home\password.txt" | convertto-securestring
+$server = Read-host "Server"
+$user = Read-host "User"
+$credential = New-Object System.Management.Automation.PSCredential($user,$password)
+Get-process -computer $server -credential $credential
+
+
+Find User in OU
+
+$computer = Get-ADComputer -Filter * | Select-Object -ExpandProperty name
+$user_list = (get-aduser -filter * -searchbase "ou=sales,dc=contoso,dc=com" ).Name
+
+
+
+
+** Reset Password
+$session = New-pssession -computer Server -credential vlha.loc\Administrator
+invoke-command -session $session -BlockScript {import-modude Get-DomainServices} -credential vlha.loc\Administrator
+import-pssession -$session -module ActiveDirectory -prefix S500s1
+get-S500s1domainservices | where-object {$_.status -eq "Stopped"} | select-object Name,Status, Depentdent | ft -autosize
